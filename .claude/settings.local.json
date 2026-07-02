@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python \"C:\\\\Users\\\\atend\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-atend-Desktop-Extrator---Novo\\\\426a8c64-210e-47ac-bd7e-5d6655837a95\\\\scratchpad\\\\inspect.py\")",
+      "Bash(python *)",
+      "Read(//c/Users/atend/AppData/Local/Programs/Python/Python314/Lib/site-packages/streamlit/static/**)",
+      "Bash(find C:/Users/atend/AppData/Local/Programs/Python/Python314/Lib/site-packages/streamlit/static -iname *material*)",
+      "Bash(taskkill //F //IM streamlit.exe)",
+      "Bash(powershell -Command 'Get-Process | Where-Object { $_.Path -like '\\\\''*python*'\\\\'' -and \\(Get-CimInstance Win32_Process -Filter \"ProcessId=$\\($_.Id\\)\"\\).CommandLine -like '\\\\''*streamlit*'\\\\'' } | Stop-Process -Force')",
+      "Bash(netstat -ano)",
+      "Bash(powershell -Command \"Get-Process -Id 17028 -ErrorAction SilentlyContinue\")",
+      "Bash(taskkill //F //PID 17028)"
+    ]
+  }
+}
