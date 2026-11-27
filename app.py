@@ -219,6 +219,26 @@ section[data-testid="stSidebar"] textarea {
     color: #F6F5F1 !important;
 }
 
+/* Botões secundários (ex: "Limpar extrações") — contorno, texto escuro,
+   para não competir com a ação principal ao lado */
+.stButton button[kind="secondary"] {
+    background-color: transparent !important;
+    color: #16302B !important;
+    border: 1px solid #16302B !important;
+    border-radius: 3px !important;
+}
+.stButton button[kind="secondary"]:hover {
+    background-color: #EFEDE4 !important;
+    border-color: #A0442C !important;
+}
+.stButton button[kind="secondary"] [data-testid="stMarkdownContainer"] p,
+.stButton button[kind="secondary"] [data-testid="stMarkdownContainer"] span {
+    color: #16302B !important;
+}
+.stButton button[kind="secondary"]:hover [data-testid="stMarkdownContainer"] p {
+    color: #A0442C !important;
+}
+
 /* Cabeçalho / protocolo */
 .ledger-header {
     display: flex;
@@ -351,10 +371,23 @@ with st.expander("ℹ️ Como usar"):
 # Upload
 # ---------------------------------------------------------------------------
 
+if 'uploader_key' not in st.session_state:
+    st.session_state['uploader_key'] = 0
+
+
+def limpar_extracoes():
+    """Descarta os resultados e os arquivos enviados, voltando ao estado inicial."""
+    for chave in ('df', 'excel'):
+        st.session_state.pop(chave, None)
+    # O file_uploader não tem método de reset: trocar a key cria um widget novo, vazio
+    st.session_state['uploader_key'] += 1
+
+
 arquivos_upload = st.file_uploader(
     "Selecione arquivos XML ou um ZIP com vários XMLs",
     type=['xml', 'zip'],
     accept_multiple_files=True,
+    key=f"uploader_{st.session_state['uploader_key']}",
 )
 
 if arquivos_upload:
@@ -422,12 +455,18 @@ if 'df' in st.session_state:
     st.dataframe(df_filtrado, use_container_width=True, hide_index=True)
 
     excel_filtrado = converter_para_excel(df_filtrado)
-    st.download_button(
-        label="⬇️ Baixar resultado filtrado (Excel)",
-        data=excel_filtrado,
-        file_name="resultado_extracao_nfe.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        type="primary",
-    )
+    with st.container(horizontal=True, gap="small"):
+        st.download_button(
+            label="⬇️ Baixar resultado filtrado (Excel)",
+            data=excel_filtrado,
+            file_name="resultado_extracao_nfe.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            type="primary",
+        )
+        st.button(
+            "🗑️ Limpar extrações",
+            on_click=limpar_extracoes,
+            help="Remove os resultados e os arquivos enviados para começar uma nova extração.",
+        )
 else:
     st.info("👆 Envie arquivos XML ou um ZIP para começar.")
